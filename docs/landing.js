@@ -1,4 +1,4 @@
-import mountIris from './media/taste/iris.js'
+import mountIris from './assets/moments/iris-opens/moment.js'
 import * as motion from './media/taste/lib.js'
 import { init } from './media/taste/motion.js'
 
