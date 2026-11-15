@@ -13,7 +13,7 @@ Gli installer del workspace e i checksum SHA-256 sono su [GitHub Releases](https
 | Windows x64 | Apri il setup `.exe` non firmato. |
 | macOS Apple Silicon | Monta il `.dmg` non notarizzato e trascina CosmoCoding in Applicazioni. |
 | Android 11+ | Installa l’APK firmato per l’anteprima. Se un’anteprima successiva usa un certificato diverso, disinstalla prima la versione precedente. |
-| Ubuntu/Debian amd64 | Usa `sudo apt install ./CosmoCoding-<versione>-Linux-x64.deb`. |
+| Ubuntu/Debian amd64 | Usa `sudo apt install ./CosmoCoding-<versione>-Linux-amd64.deb`. |
 
 Il workflow manuale **Release CosmoCoding** compila gli installer del workspace e pubblica la prerelease su GitHub quando tutti i pacchetti sono disponibili.
 
