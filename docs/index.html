@@ -1,65 +1,132 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" data-type="software" data-radius="sharp" data-buttons="solid" data-motion="quiet" data-ground="sage">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0d1116">
-  <meta name="description" content="Sviluppa dal telefono con GPT, Claude o Gemini, rivedi il codice su GitHub e crea app installabili con GitHub Actions.">
-  <title>CosmoCoding — Sviluppa dal telefono</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#0b1217">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="software">
+  <meta name="description" content="CosmoCoding è un workspace per sviluppare dal telefono con GitHub, GPT, Claude e Gemini. Rivedi il codice e compila app con GitHub Actions.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CosmoCoding — Sviluppa dal telefono">
+  <meta property="og:description" content="Dal repository GitHub alla pull request, con GPT, Claude o Gemini nel tuo workspace mobile.">
+  <meta property="og:url" content="https://cosmonetinfo.github.io/CosmoCoding/">
+  <meta property="og:image" content="https://cosmonetinfo.github.io/CosmoCoding/media/share.jpg">
+  <link rel="canonical" href="https://cosmonetinfo.github.io/CosmoCoding/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css">
+  <link rel="stylesheet" href="media/taste/iris.css">
+  <link rel="stylesheet" href="media/taste/motion.css">
   <link rel="icon" href="cosmocoding-icon-192.png">
+  <script type="module" src="landing.js"></script>
+  <script type="module" src="media/taste/fx.js" data-fx-auto></script>
+  <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+  <title>CosmoCoding — Sviluppa dal telefono</title>
 </head>
 <body>
-  <header class="nav wrap">
-    <a class="brand" href="./"><img src="cosmocoding-icon-192.png" alt="" width="34" height="34">Cosmo<strong>Coding</strong></a>
-    <nav aria-label="Menu"><a href="#flusso">Come funziona</a><a href="guida.html">Guida</a><a href="https://github.com/CosmoNetinfo/CosmoCoding">GitHub ↗</a></nav>
+  <!-- Taste Skill: software · collage · navy and mint brand palette · Geist and IBM Plex Mono · fluted glass · iris-opens -->
+  <header class="nav site-nav">
+    <a class="skip-link" href="#main">Vai al contenuto</a>
+    <div class="wrap nav-inner">
+      <a class="brand" href="./"><img src="cosmocoding-icon-192.png" alt="" width="40" height="40">Cosmo<span>Coding</span></a>
+      <nav aria-label="Navigazione principale">
+        <a href="#flusso">Come funziona</a>
+        <a href="#connettori">Connettori</a>
+        <a href="guida.html">Guida</a>
+      </nav>
+      <a class="btn btn--secondary" href="#download">Scarica CosmoCoding <span aria-hidden="true">↓</span></a>
+    </div>
   </header>
-  <main>
-    <section class="hero wrap">
-      <div>
-        <p class="eyebrow">WORKSPACE MOBILE PER SVILUPPATORI</p>
-        <h1>La tua prossima app <em>parte dal telefono.</em></h1>
-        <p class="lead">Descrivi una modifica a GPT, Claude o Gemini, rivedi il diff e apri una pull request. GitHub Actions compila i pacchetti da installare sui tuoi dispositivi.</p>
-        <div class="actions">
-          <a class="button" href="https://github.com/CosmoNetinfo/CosmoCoding/releases">Scarica CosmoCoding ↗</a>
-          <a class="button alt" href="https://vibedock-mobile.comfyblade8.chatgpt.site">Apri il workspace ↗</a>
-        </div>
-      </div>
-      <figure class="editor" aria-label="Esempio di modifica a un progetto Flutter">
-        <div class="editor-bar"><i></i><i></i><i></i><span>vibedock_app/lib/main.dart</span></div>
-        <div class="editor-body">
-          <div class="prompt">
-            <img src="cosmocoding-icon-192.png" width="62" height="62" alt="La mascotte di CosmoCoding tra due parentesi angolari">
-            <div><span>Richiesta</span><b>Aggiungi una schermata di benvenuto.</b></div>
+  <main id="main" tabindex="-1">
+    <section class="section hero hero--collage" data-enter>
+      <div class="wrap">
+        <div class="hero-text hero-grid">
+        <div class="hero-copy">
+          <h1>Workspace di sviluppo<br><span>dal telefono.</span></h1>
+          <p class="hero__lead">Apri il tuo repository GitHub, descrivi una modifica a GPT, Claude o Gemini e rivedi il diff prima di aprire la pull request.</p>
+          <div class="actions">
+            <a class="btn btn--primary" href="#download">Scarica CosmoCoding <span aria-hidden="true">↓</span></a>
+            <a class="btn btn--secondary" href="https://vibedock-mobile.comfyblade8.chatgpt.site">Apri il workspace <span aria-hidden="true">↗</span></a>
           </div>
-          <div class="line"><span>12</span> <code>return MaterialApp(</code></div>
-          <div class="line green"><span>13</span> <code>+ title: 'La mia app',</code></div>
-          <div class="line green"><span>14</span> <code>+ home: WelcomeScreen(),</code></div>
-          <div class="line"><span>15</span> <code>);</code></div>
-          <div class="editor-footer"><span class="dot"></span> Anteprima del diff <span>Pull request ↗</span></div>
+          <p class="availability">Android · Windows · macOS · Linux</p>
         </div>
-      </figure>
-    </section>
-    <section class="platforms wrap" aria-labelledby="targets">
-      <div><p class="eyebrow">GITHUB ACTIONS</p><h2 id="targets">Pacchetti installabili</h2></div>
-      <ul class="targets">
-        <li><b>Windows</b><span>Setup .exe · x64</span></li>
-        <li><b>macOS</b><span>.dmg · Apple Silicon</span></li>
-        <li><b>Android</b><span>.apk · debug</span></li>
-        <li><b>Linux</b><span>.deb · amd64</span></li>
-      </ul>
-      <p class="footnote">I pacchetti desktop sono per test e distribuzione diretta. Il DMG non è notarizzato e il setup Windows non è firmato.</p>
-    </section>
-    <section class="workflow wrap" id="flusso" aria-labelledby="flow-title">
-      <p class="eyebrow">DAL REPOSITORY ALL’APP</p><h2 id="flow-title">Come funziona</h2>
-      <div class="steps">
-        <article><h3>Collega il progetto</h3><p>Apri il repository GitHub, seleziona i file e scegli il modello AI. In Connessioni puoi consultare i progetti Supabase e controllare i deploy su Vercel.</p></article>
-        <article><h3>Rivedi la proposta</h3><p>Controlla il diff, scegli quali file includere e invia la modifica su un branch dedicato con una pull request.</p></article>
-        <article><h3>Avvia la build</h3><p>Dopo il merge, avvia il workflow e scarica il pacchetto della tua piattaforma dalla pagina dell’esecuzione su GitHub.</p></article>
+        <div class="frame collage-frame hero__art" data-visual>
+          <div class="fluted" data-fx="fluted-glass" data-fx-seed="cosmocoding" aria-hidden="true"></div>
+          <div class="app-frame hero-app">
+            <div class="window-bar">
+              <img src="cosmocoding-icon-192.png" alt="" width="30" height="30">
+              <strong>CosmoCoding</strong>
+              <span>Workspace</span>
+            </div>
+            <div class="window-body">
+              <p class="mono path">lib/main.dart</p>
+              <div class="request"><span>Richiesta al modello</span><strong>Aggiungi una schermata di benvenuto.</strong></div>
+              <p class="example-label">Esempio di proposta</p>
+              <pre class="diff" aria-label="Esempio di differenze nel codice"><code><span>  return MaterialApp(</span><span class="removed">−   home: HomeScreen(),</span><span class="added">+   home: WelcomeScreen(),</span><span>  );</span></code></pre>
+            </div>
+          </div>
+          <div class="review-card" aria-hidden="true">
+            <div class="mono review-branch">main <span>←</span> feat/benvenuto</div>
+            <strong>Pull request</strong>
+            <span>1 file modificato</span>
+          </div>
+        </div>
+        </div>
       </div>
-      <a href="guida.html">Guida ai token e ai connettori ↗</a>
+    </section>
+    <section id="flusso" class="section flow">
+      <div class="wrap flow-layout">
+        <div class="flow-copy">
+          <h2>Il flusso delle pull request.</h2>
+          <ol class="steps">
+            <li><span class="mono">01</span><div><h3>Apri il repository</h3><p>Scegli il branch e i file da inviare al modello.</p></div></li>
+            <li><span class="mono">02</span><div><h3>Revisione del diff</h3><p>Confronta le righe aggiunte e rimosse, poi scegli quali file includere.</p></div></li>
+            <li><span class="mono">03</span><div><h3>Apri la pull request</h3><p>Invia le modifiche su un branch dedicato. Dopo il merge puoi avviare GitHub Actions.</p></div></li>
+          </ol>
+        </div>
+        <div class="screen-stage">
+          <img src="media/workspace-android.webp" alt="La schermata Workspace di CosmoCoding su Android con il campo per la richiesta al modello" width="648" height="1440" loading="lazy">
+          <img src="media/review-android.webp" alt="La revisione del modello Flutter in CosmoCoding su Android" width="648" height="1440" loading="lazy">
+        </div>
+      </div>
+    </section>
+    <section id="connettori" class="section integrations ground-inverse" data-moment="iris-opens" data-moment-opts='{"from":"surface"}'>
+      <div class="wrap">
+        <h2>I tuoi strumenti, in CosmoCoding.</h2>
+        <p class="section-lead">Usa le tue credenziali e collega i servizi del tuo progetto.</p>
+        <div class="integration-list">
+          <div><span class="role">Codice e build</span><div class="provider"><img src="media/icons/github.svg" alt="" width="26" height="26"><strong>GitHub</strong></div><p>Repository, pull request e GitHub Actions.</p></div>
+          <div><span class="role">Modelli AI</span><div class="provider"><img src="media/icons/google-gemini-icon.svg" alt="" width="26" height="26"><strong>GPT, Claude e Gemini</strong></div><p>Scegli il provider per generare la proposta.</p></div>
+          <div><span class="role">Database</span><div class="provider"><img src="media/icons/supabase.svg" alt="" width="26" height="26"><strong>Supabase</strong></div><p>Consulta i progetti del tuo account.</p></div>
+          <div><span class="role">Deploy</span><div class="provider"><img src="media/icons/vercel.svg" alt="" width="26" height="26"><strong>Vercel</strong></div><p>Controlla lo stato di anteprime e produzione.</p></div>
+        </div>
+        <a class="btn btn--primary" href="guida.html">Apri la guida ai token <span aria-hidden="true">↗</span></a>
+      </div>
     </section>
   </main>
-  <footer class="wrap"><span>CosmoCoding</span><a href="https://github.com/CosmoNetinfo/CosmoCoding">Codice e documentazione ↗</a></footer>
+  <footer id="download" class="section downloads closing">
+      <div class="wrap download-grid">
+        <div>
+        <h2>Scarica CosmoCoding.</h2>
+        <p class="section-lead">L’anteprima è disponibile su GitHub Releases. Scegli il pacchetto per il tuo dispositivo.</p>
+        <ul class="download-list">
+          <li><a href="https://github.com/CosmoNetinfo/CosmoCoding/releases/download/v0.1.4/CosmoCoding-0.1.4-Android-preview.apk"><strong>Android</strong><span>Android 8 o successivo</span><span class="mono">.apk <b aria-hidden="true">↓</b></span></a></li>
+          <li><a href="https://github.com/CosmoNetinfo/CosmoCoding/releases/download/v0.1.4/CosmoCoding-0.1.4-Windows-x64-Setup.exe"><strong>Windows</strong><span>x64</span><span class="mono">.exe <b aria-hidden="true">↓</b></span></a></li>
+          <li><a href="https://github.com/CosmoNetinfo/CosmoCoding/releases/download/v0.1.4/CosmoCoding-0.1.4-macOS-arm64.dmg"><strong>macOS</strong><span>Apple Silicon</span><span class="mono">.dmg <b aria-hidden="true">↓</b></span></a></li>
+          <li><a href="https://github.com/CosmoNetinfo/CosmoCoding/releases/download/v0.1.4/CosmoCoding-0.1.4-Linux-amd64.deb"><strong>Linux</strong><span>Ubuntu o Debian · amd64</span><span class="mono">.deb <b aria-hidden="true">↓</b></span></a></li>
+        </ul>
+        <a class="btn btn--secondary" href="https://github.com/CosmoNetinfo/CosmoCoding/releases/tag/v0.1.4">Apri le note di rilascio <span aria-hidden="true">↗</span></a>
+        <nav aria-label="Informazioni sul progetto" class="footer-links">
+          <a class="text-link" href="guida.html">Guida</a>
+          <a class="text-link" href="https://github.com/CosmoNetinfo/CosmoCoding">Repository ↗</a>
+        </nav>
+        </div>
+        <div class="download-screen">
+          <img src="media/build-android.webp" alt="La scheda Build di CosmoCoding su Android con i quattro sistemi supportati" width="648" height="1440" loading="lazy">
+        </div>
+      </div>
+  </footer>
 </body>
 </html>
