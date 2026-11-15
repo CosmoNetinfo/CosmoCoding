@@ -91,6 +91,8 @@ def smoke():
     start = adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.WorkspaceActivity")
     assert "Status: ok" in start, start
     find(label("Scrivi codice"), "Il workspace integrato non si è aperto", 60)
+    header = next(node for node in ui() if node.get("content-desc") == "CosmoCoding, home")
+    assert int(re.findall(r"\d+", header.get("bounds"))[1]) >= 80, "Intestazione sovrapposta alla barra di stato del Pixel 6"
     screen("01-workspace")
     print(f"Workspace aperto su Android {android_version}.", flush=True)
 

@@ -13,7 +13,9 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.widget.FrameLayout;
 import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -52,11 +54,15 @@ public final class WorkspaceActivity extends Activity {
         super.onCreate(savedState);
         workspace = new WebView(this);
         workspace.setBackgroundColor(BACKGROUND);
+        FrameLayout content = new FrameLayout(this);
+        content.setBackgroundColor(BACKGROUND);
+        content.addView(workspace, new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         getWindow().setStatusBarColor(BACKGROUND);
         getWindow().setNavigationBarColor(BACKGROUND);
         if (Build.VERSION.SDK_INT >= 30) {
             getWindow().setDecorFitsSystemWindows(false);
-            workspace.setOnApplyWindowInsetsListener((view, insets) -> {
+            content.setOnApplyWindowInsetsListener((view, insets) -> {
                 Insets safe = insets.getInsets(WindowInsets.Type.systemBars()
                     | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
                 view.setPadding(safe.left, safe.top, safe.right, safe.bottom);
@@ -90,7 +96,8 @@ public final class WorkspaceActivity extends Activity {
             }
         });
         workspace.addJavascriptInterface(new ProviderBridge(), "CosmoNative");
-        setContentView(workspace);
+        setContentView(content);
+        content.requestApplyInsets();
         workspace.loadUrl(ORIGIN + "/");
     }
 
