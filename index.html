@@ -128,6 +128,32 @@
           <button class="button" type="submit">Carica progetti</button>
           <div id="projects"></div>
         </form>
+        <div class="card stack">
+          <div class="card-head"><h2>Vercel</h2><span class="pill">Progetti e deploy</span></div>
+          <form class="stack" id="connect-vercel">
+            <div class="form-two">
+              <label>Token Vercel<input id="vercel-token" type="password" required autocomplete="off" placeholder="Token di accesso Vercel"></label>
+              <label>Team ID o slug (facoltativo)<input id="vercel-scope" maxlength="100" autocapitalize="off" spellcheck="false" placeholder="Es. cosmonetinfo-projects"></label>
+            </div>
+            <div class="row">
+              <button class="button primary" type="submit">Collega Vercel</button>
+              <a href="https://vercel.com/account/tokens" target="_blank" rel="noopener">Crea un token ↗</a>
+            </div>
+          </form>
+          <div class="stack" id="vercel-browser" hidden>
+            <div class="form-two">
+              <label>Progetto Vercel<select id="vercel-project"></select></label>
+              <div class="row">
+                <button class="button" id="vercel-load-deployments">Carica deploy</button>
+                <button class="button" id="vercel-more-projects" hidden>Altri progetti</button>
+              </div>
+            </div>
+            <p id="vercel-status" class="hint"></p>
+            <div id="vercel-deployments"></div>
+            <button class="button" id="vercel-more-deployments" hidden>Altri deploy</button>
+            <a href="https://vercel.com/dashboard" target="_blank" rel="noopener">Apri dashboard Vercel ↗</a>
+          </div>
+        </div>
       </section>
       <p id="notice" role="status" aria-live="polite" hidden></p>
     </main>

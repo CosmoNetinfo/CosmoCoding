@@ -292,11 +292,52 @@ async function supabase(body) {
   })) }
 }
 
+async function vercel(body, listDeployments = false) {
+  const token = credential(body.token, 'Vercel')
+  const scope = body.scope ?? ''
+  expect(typeof scope === 'string' && (!scope || /^[a-z0-9][a-z0-9_-]{0,99}$/i.test(scope)),
+    'Indica un Team ID o uno slug Vercel valido.')
+  const query = new URLSearchParams({ limit: listDeployments ? '20' : '50' })
+  if (scope) query.set(scope.startsWith('team_') ? 'teamId' : 'slug', scope)
+  if (body.cursor !== undefined) {
+    expect(Number.isSafeInteger(body.cursor) && body.cursor > 0, 'Paginazione Vercel non valida.')
+    query.set('until', String(body.cursor))
+  }
+  if (listDeployments) {
+    expect(typeof body.project === 'string' && /^prj_[a-z0-9_]{1,100}$/i.test(body.project), 'Seleziona un progetto Vercel.')
+    query.set('projectId', body.project)
+  }
+  const path = listDeployments ? '/v7/deployments' : '/v10/projects'
+  const data = await call(`https://api.vercel.com${path}?${query}`, {
+    headers: { authorization: `Bearer ${token}`, accept: 'application/json' }
+  })
+  const next = Number.isSafeInteger(data?.pagination?.next) && data.pagination.next > 0 ? data.pagination.next : null
+  if (!listDeployments) {
+    const projects = Array.isArray(data) ? data : data?.projects
+    expect(Array.isArray(projects), 'Vercel ha restituito un elenco progetti inatteso.', 502)
+    return { projects: projects.map(({ id, name }) => ({ id, name })), next }
+  }
+  expect(Array.isArray(data?.deployments), 'Vercel ha restituito un elenco deploy inatteso.', 502)
+  return {
+    deployments: data.deployments.map(item => ({
+      id: item.uid || item.id,
+      state: item.readyState || item.state,
+      target: item.target,
+      createdAt: item.createdAt || item.created,
+      branch: item.meta?.githubCommitRef || item.meta?.gitlabCommitRef || item.meta?.bitbucketCommitRef,
+      url: typeof item.url === 'string' && /^[a-z0-9-]+\.vercel\.app$/i.test(item.url) ? `https://${item.url}` : null
+    })),
+    next
+  }
+}
+
 const routes = {
   '/api/repos': async body => ({ repositories: (await github(body)('/user/repos?per_page=50&sort=pushed&affiliation=owner,collaborator,organization_member'))
     .map(repo => repo.full_name) }),
   '/api/snapshot': snapshot, '/api/file': readFile, '/api/models': models, '/api/generate': generate,
-  '/api/publish': publish, '/api/builds': builds, '/api/supabase': supabase
+  '/api/publish': publish, '/api/builds': builds, '/api/supabase': supabase,
+  '/api/vercel-projects': vercel,
+  '/api/vercel-deployments': body => vercel(body, true)
 }
 
 export async function handleApi(request, pathname) {

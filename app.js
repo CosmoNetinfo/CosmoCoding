@@ -1,5 +1,6 @@
 const $ = id => document.getElementById(id)
 const state = { auth: new Map(), selected: new Set(), contents: new Map(), snapshot: null, proposal: null }
+const vercel = { connection: null, projectCursor: null, deploymentCursor: null }
 const providerNames = { openai: 'GPT', claude: 'Claude', gemini: 'Gemini' }
 let busy = false
 let noticeTimer
@@ -16,7 +17,8 @@ function node(tag, text, className) {
 function link(text, url) {
   const item = node('a', text)
   const target = new URL(url)
-  if (target.protocol === 'https:' && ['github.com', 'supabase.com'].includes(target.hostname)) item.href = target.href
+  if (target.protocol === 'https:' && (['github.com', 'supabase.com', 'vercel.com'].includes(target.hostname)
+    || /^[a-z0-9-]+\.vercel\.app$/i.test(target.hostname))) item.href = target.href
   item.target = '_blank'
   item.rel = 'noopener'
   return item
@@ -338,5 +340,78 @@ $('connect-supabase').addEventListener('submit', run(async () => {
   if (!projects.length) $('projects').append(node('p', 'Nessun progetto accessibile con questo token.', 'hint'))
   notice(projects.length + ' progetti Supabase caricati.')
 }))
+
+function addVercelProjects(projects) {
+  const select = $('vercel-project')
+  const known = new Set(Array.from(select.options, option => option.value))
+  for (const project of projects) {
+    if (known.has(project.id)) continue
+    const option = node('option', project.name)
+    option.value = project.id
+    select.append(option)
+    known.add(project.id)
+  }
+  $('vercel-load-deployments').disabled = !select.options.length
+}
+
+function resetVercelDeployments() {
+  vercel.deploymentCursor = null
+  $('vercel-deployments').replaceChildren()
+  $('vercel-more-deployments').hidden = true
+  $('vercel-status').textContent = $('vercel-project').value
+    ? 'Seleziona un progetto e carica i suoi deploy.'
+    : 'Nessun progetto disponibile per questo account o team.'
+}
+
+$('connect-vercel').addEventListener('submit', run(async () => {
+  const connection = { token: $('vercel-token').value.trim(), scope: $('vercel-scope').value.trim() }
+  const { projects, next } = await api('vercel-projects', connection)
+  vercel.connection = connection
+  vercel.projectCursor = next
+  $('vercel-token').value = ''
+  $('vercel-project').replaceChildren()
+  addVercelProjects(projects)
+  resetVercelDeployments()
+  $('vercel-more-projects').hidden = !next
+  $('vercel-browser').hidden = false
+  notice('Vercel collegato.')
+}))
+
+$('vercel-more-projects').addEventListener('click', run(async () => {
+  const cursor = vercel.projectCursor
+  const { projects, next } = await api('vercel-projects', { ...vercel.connection, cursor })
+  addVercelProjects(projects)
+  vercel.projectCursor = next === cursor ? null : next
+  $('vercel-more-projects').hidden = !vercel.projectCursor
+}, $('vercel-more-projects')))
+
+$('vercel-project').addEventListener('change', resetVercelDeployments)
+
+async function loadVercelDeployments(cursor) {
+  const project = $('vercel-project').value
+  const { deployments, next } = await api('vercel-deployments', { ...vercel.connection, project, cursor: cursor ?? undefined })
+  if ($('vercel-project').value !== project) return
+  if (!cursor) $('vercel-deployments').replaceChildren()
+  const labels = { READY: 'Pronto', BUILDING: 'In compilazione', ERROR: 'Errore', CANCELED: 'Annullato',
+    INITIALIZING: 'In preparazione', QUEUED: 'In coda', BLOCKED: 'Bloccato' }
+  const dateFormat = new Intl.DateTimeFormat('it-IT', { dateStyle: 'short', timeStyle: 'short' })
+  for (const deployment of deployments) {
+    const { target, branch, createdAt, state, url, id } = deployment
+    const environment = target === 'production' ? 'Produzione' : target || 'Anteprima'
+    const row = node('div', undefined, 'item')
+    row.append(url ? link((branch || 'Apri deploy') + ' ↗', url) : node('span', branch || id || 'Deploy'),
+      node('span', [environment, labels[state] || state, Number.isFinite(createdAt) ? dateFormat.format(createdAt) : '']
+        .filter(Boolean).join(' · ')))
+    $('vercel-deployments').append(row)
+  }
+  vercel.deploymentCursor = next === cursor ? null : next
+  $('vercel-more-deployments').hidden = !vercel.deploymentCursor
+  $('vercel-status').textContent = $('vercel-deployments').childElementCount
+    ? $('vercel-deployments').childElementCount + ' deploy'
+    : 'Nessun deploy disponibile per questo progetto.'
+}
+
+$('vercel-load-deployments').addEventListener('click', run(() => loadVercelDeployments(), $('vercel-load-deployments')))
+$('vercel-more-deployments').addEventListener('click', run(() => loadVercelDeployments(vercel.deploymentCursor), $('vercel-more-deployments')))
 
 if (!nativeTransport && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {})

@@ -37,6 +37,44 @@ test('Android usa lo stesso connettore attraverso il bridge nativo', async t => 
   assert.equal((await response.json()).projects[0].name, 'Progetto test')
 })
 
+test('Vercel legge progetti e deploy nel team selezionato senza restituire configurazione privata', async t => {
+  const requests = []
+  t.mock.method(globalThis, 'fetch', (url, { method, headers }) => {
+    assert.equal(headers.authorization, 'Bearer fixture-vercel')
+    assert.equal(method, 'GET')
+    const endpoint = new URL(url)
+    assert.equal(endpoint.origin, 'https://api.vercel.com')
+    requests.push(endpoint)
+    if (endpoint.pathname === '/v10/projects') {
+      return Response.json({ projects: [{ id: 'prj_example', name: 'Progetto', env: [{ value: 'privato' }] }],
+        pagination: { next: 1690000000000 } })
+    }
+    assert.equal(endpoint.pathname, '/v7/deployments')
+    return Response.json({ deployments: [
+      { uid: 'one', readyState: 'READY', target: 'production', url: 'project.vercel.app',
+        createdAt: 1690000000000, meta: { githubCommitRef: 'main', other: 'privato' } },
+      { uid: 'two', state: 'BUILDING', url: 'project.vercel.app.invalid' }
+    ] })
+  })
+  const account = { token: 'fixture-vercel', scope: 'team_example' }
+  const projects = await send('/api/vercel-projects', account)
+  assert.equal(projects.status, 200)
+  assert.deepEqual(await projects.json(), { projects: [{ id: 'prj_example', name: 'Progetto' }], next: 1690000000000 })
+  const deployments = await send('/api/vercel-deployments', {
+    token: account.token, scope: 'cosmo-team', project: 'prj_example', cursor: 1690000000000
+  })
+  assert.equal(deployments.status, 200)
+  assert.equal(requests[0].searchParams.get('teamId'), 'team_example')
+  assert.equal(requests[1].searchParams.get('slug'), 'cosmo-team')
+  assert.equal(requests[1].searchParams.get('projectId'), 'prj_example')
+  assert.equal(requests[1].searchParams.get('until'), '1690000000000')
+  assert.deepEqual(await deployments.json(), { deployments: [
+    { id: 'one', state: 'READY', target: 'production', createdAt: 1690000000000, branch: 'main',
+      url: 'https://project.vercel.app' },
+    { id: 'two', state: 'BUILDING', url: null }
+  ], next: null })
+})
+
 test('invia i file al provider scelto e scarta i percorsi estranei', async t => {
   t.mock.method(globalThis, 'fetch', (url, options) => {
     assert.equal(url, 'https://api.openai.com/v1/responses')

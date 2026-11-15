@@ -35,6 +35,7 @@ Il modello modifica i file esistenti selezionati. Per aggiungere i file iniziali
 | [Anthropic](https://platform.claude.com/settings/keys) | Chiave API Claude | Elenco modelli e generazione via Messages API. |
 | [Google](https://aistudio.google.com/api-keys) | Chiave API Gemini | Elenco dei modelli e generazione. |
 | [Supabase](https://supabase.com/dashboard/account/tokens) | Token Management API con accesso alla lettura dei progetti | Elenco progetti e collegamenti ai rispettivi dashboard. |
+| [Vercel](https://vercel.com/account/tokens) | Token di accesso Vercel per l’account o il team. Per selezionare un team, inserisci il suo ID o slug. | Elenco progetti, stato dei deploy di produzione e anteprima, apertura degli URL e del dashboard. |
 
 Le credenziali vengono usate dal backend per chiamare il servizio selezionato e tenute in memoria nella scheda. Ricaricare la pagina azzera la sessione. I provider AI applicano le quote e la fatturazione del proprio account API.
 

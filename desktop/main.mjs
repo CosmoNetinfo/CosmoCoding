@@ -9,7 +9,8 @@ const smoke = process.argv.includes('--cosmocoding-smoke')
 
 function openExternal(url) {
   const target = URL.parse(url)
-  if (target?.protocol === 'https:' && ['github.com', 'supabase.com'].includes(target.hostname)) {
+  if (target?.protocol === 'https:' && (['github.com', 'supabase.com', 'vercel.com'].includes(target.hostname)
+    || /^[a-z0-9-]+\.vercel\.app$/i.test(target.hostname))) {
     void shell.openExternal(target.href).catch(() => {})
   }
 }

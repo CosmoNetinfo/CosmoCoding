@@ -6,7 +6,7 @@ on:
       tag:
         description: Tag della release da installare
         required: true
-        default: v0.1.2
+        default: v0.1.3
         type: string
       api:
         description: API Android (29 verifica installazione, 35 verifica interfaccia)

@@ -81,7 +81,7 @@ public final class WorkspaceActivity extends Activity {
                 Uri uri = request.getUrl();
                 if (local(uri) && "/".equals(uri.getPath())) return false;
                 if (request.isForMainFrame() && request.hasGesture() && "https".equals(uri.getScheme())
-                    && ("github.com".equals(uri.getHost()) || "supabase.com".equals(uri.getHost()))) {
+                    && externalLink(uri.getHost())) {
                     try {
                         startActivity(new Intent(Intent.ACTION_VIEW, uri));
                     } catch (ActivityNotFoundException ignored) {
@@ -103,6 +103,11 @@ public final class WorkspaceActivity extends Activity {
 
     private static boolean local(Uri uri) {
         return "https".equals(uri.getScheme()) && HOST.equals(uri.getEncodedAuthority());
+    }
+
+    private static boolean externalLink(String host) {
+        return host != null && ("github.com".equals(host) || "supabase.com".equals(host)
+            || "vercel.com".equals(host) || host.matches("[a-z0-9-]+\\.vercel\\.app"));
     }
 
     private static String assetType(String path) {
@@ -148,6 +153,7 @@ public final class WorkspaceActivity extends Activity {
             case "generativelanguage.googleapis.com" -> path.equals("/v1beta/models")
                 || path.matches("/v1beta/models/[A-Za-z0-9._:-]{1,100}:generateContent");
             case "api.supabase.com" -> path.equals("/v1/projects");
+            case "api.vercel.com" -> path.equals("/v10/projects") || path.equals("/v7/deployments");
             default -> false;
         };
     }
@@ -175,6 +181,7 @@ public final class WorkspaceActivity extends Activity {
                 try {
                     URI target = URI.create(url);
                     if (!allowedProvider(target) || !("GET".equals(method) || "POST".equals(method))
+                        || ("api.vercel.com".equals(target.getHost()) && !"GET".equals(method))
                         || headers.length() > 10_000 || body.length() > 300_000) {
                         throw new IOException("Invalid provider request");
                     }

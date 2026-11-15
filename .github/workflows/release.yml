@@ -182,7 +182,7 @@ jobs:
             exit 1
           fi
           cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
-          Anteprima di CosmoCoding con la mascotte e il workspace integrato. GitHub, GPT, Claude, Gemini e Supabase usano le credenziali inserite nell’app.
+          Anteprima di CosmoCoding con la mascotte e il workspace integrato. GitHub, GPT, Claude, Gemini, Supabase e Vercel usano le credenziali inserite nell’app.
 
           - **Windows x64** — esegui il setup `.exe`. Il setup non è firmato.
           - **macOS Apple Silicon** — monta il `.dmg` e trascina l’app in Applicazioni. Il pacchetto non è notarizzato.
