@@ -21,7 +21,9 @@ h1 em{color:var(--mint);font-style:normal}
 .editor-bar i,.dot{width:7px;height:7px;border-radius:50%;background:#65817f;flex:none}
 .editor-bar span{margin-left:8px}
 .editor-body{padding:14px}
-.prompt{display:grid;gap:5px;margin:0 0 18px;padding:12px;border:1px solid #31433f;border-radius:8px;background:#1a2c2b}
+.prompt{display:flex;align-items:center;gap:12px;margin:0 0 18px;padding:10px;border:1px solid #31433f;border-radius:8px;background:#1a2c2b}
+.prompt img{border-radius:8px;flex:none}
+.prompt div{display:grid;gap:4px}
 .prompt span,.editor-footer{font-size:12px;color:var(--muted)}
 .prompt b{font-size:14px}
 .line{display:flex;gap:11px;white-space:pre;overflow:auto;padding:2px 6px;color:#cedce3;font:12px/1.7 Consolas,monospace}
