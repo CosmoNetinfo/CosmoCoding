@@ -1,0 +1,63 @@
+name: Verifica APK pubblicato
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag della release da installare
+        required: true
+        default: v0.1.0
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  android-release-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - name: Scarica e verifica l’APK della release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          mkdir -p "$RUNNER_TEMP/cosmocoding-apk"
+          cd "$RUNNER_TEMP/cosmocoding-apk"
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.apk' --pattern SHA256SUMS.txt
+          shopt -s nullglob
+          apks=(*.apk)
+          test "${#apks[@]}" = 1
+          sha256sum --check --ignore-missing SHA256SUMS.txt
+          echo "COSMO_APK=$PWD/${apks[0]}" >> "$GITHUB_ENV"
+      - name: Prepara emulatore Android 15
+        shell: bash
+        run: |
+          sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          tools="$sdk/cmdline-tools/latest/bin"
+          image='system-images;android-35;google_apis;x86_64'
+          test -c /dev/kvm
+          sudo setfacl -m "u:$(id -un):rw" /dev/kvm
+          "$tools/sdkmanager" "platform-tools" "emulator" "$image"
+          export ANDROID_AVD_HOME="$RUNNER_TEMP/cosmocoding-avd"
+          mkdir -p "$ANDROID_AVD_HOME"
+          printf 'no\n' | "$tools/avdmanager" create avd --name cosmocoding --package "$image" --device pixel_6
+          echo "ANDROID_AVD_HOME=$ANDROID_AVD_HOME" >> "$GITHUB_ENV"
+      - name: Installa il download originale e prova il workspace
+        shell: bash
+        run: |
+          sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          adb="$sdk/platform-tools/adb"
+          "$sdk/emulator/emulator" -avd cosmocoding -port 5554 -no-window -no-audio -no-boot-anim -no-snapshot \
+            -gpu swiftshader_indirect -accel on > "$RUNNER_TEMP/cosmo-emulator.log" 2>&1 &
+          emulator=$!
+          trap 'kill "$emulator" 2>/dev/null || true' EXIT
+          if ! python3 test/android-smoke.py "$adb" "$COSMO_APK"; then
+            tail -n 70 "$RUNNER_TEMP/cosmo-emulator.log"
+            exit 1
+          fi
