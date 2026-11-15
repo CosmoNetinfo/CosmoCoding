@@ -8,7 +8,7 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 
-ADB, APK, SCREEN_PATH = sys.argv[1:]
+ADB, APK, SCREEN_PATH, EXPECTED_API = sys.argv[1:]
 SCREENS = Path(SCREEN_PATH)
 PACKAGE = "info.cosmonet.cosmocoding"
 
@@ -73,6 +73,8 @@ def tap(predicate, description):
 def smoke():
     adb("wait-for-device", timeout=210)
     wait_until(lambda: adb("shell", "getprop", "sys.boot_completed") == "1", "Emulatore non avviato", 140)
+    assert adb("shell", "getprop", "ro.build.version.sdk") == EXPECTED_API
+    android_version = adb("shell", "getprop", "ro.build.version.release")
     adb("shell", "settings", "put", "global", "hide_error_dialogs", "1")
     for setting in ("window_animation_scale", "transition_animation_scale", "animator_duration_scale"):
         adb("shell", "settings", "put", "global", setting, "0")
@@ -81,13 +83,15 @@ def smoke():
     adb("shell", "wm", "dismiss-keyguard")
     assert "Success" in adb("install", "--no-streaming", APK, timeout=75)
     assert "package:" in adb("shell", "pm", "path", PACKAGE)
-    print("Installazione APK originale riuscita.", flush=True)
+    print(f"Installazione APK originale riuscita su Android {android_version} (API {EXPECTED_API}).", flush=True)
+    if EXPECTED_API == "29":
+        return
     adb("shell", "am", "force-stop", "com.google.android.apps.nexuslauncher")
     start = adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.WorkspaceActivity")
     assert "Status: ok" in start, start
     find(label("Scrivi codice"), "Il workspace integrato non si è aperto", 60)
     screen("01-workspace")
-    print("APK della release installato e workspace aperto su Android 15.", flush=True)
+    print(f"Workspace aperto su Android {android_version}.", flush=True)
 
     tap(label("Esplora il modello Flutter"), "Pulsante del modello assente")
     find(label("Rivedi proposta"), "L'anteprima Flutter non si è aperta")

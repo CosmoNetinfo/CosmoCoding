@@ -8,6 +8,12 @@ on:
         required: true
         default: v0.1.1
         type: string
+      api:
+        description: API Android (29 verifica installazione, 35 verifica interfaccia)
+        required: true
+        default: '35'
+        type: choice
+        options: ['29', '35']
 
 permissions:
   contents: read
@@ -16,6 +22,8 @@ jobs:
   android-release-smoke:
     runs-on: ubuntu-24.04
     timeout-minutes: 18
+    env:
+      ANDROID_TEST_API: ${{ inputs.api }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -35,12 +43,13 @@ jobs:
           test "${#apks[@]}" = 1
           sha256sum --check --ignore-missing SHA256SUMS.txt
           echo "COSMO_APK=$PWD/${apks[0]}" >> "$GITHUB_ENV"
-      - name: Prepara emulatore Android 15
+      - name: Prepara emulatore Android
         shell: bash
         run: |
           sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           tools="$sdk/cmdline-tools/latest/bin"
-          image='system-images;android-35;google_apis;x86_64'
+          [[ "$ANDROID_TEST_API" == 29 || "$ANDROID_TEST_API" == 35 ]]
+          image="system-images;android-$ANDROID_TEST_API;google_apis;x86_64"
           test -c /dev/kvm
           sudo setfacl -m "u:$(id -un):rw" /dev/kvm
           "$tools/sdkmanager" "platform-tools" "emulator" "$image"
@@ -58,7 +67,7 @@ jobs:
             -gpu swiftshader_indirect -accel on > "$RUNNER_TEMP/cosmo-emulator.log" 2>&1 &
           emulator=$!
           trap 'kill "$emulator" 2>/dev/null || true' EXIT
-          if ! python3 test/android-smoke.py "$adb" "$COSMO_APK" "$RUNNER_TEMP/cosmocoding-screens"; then
+          if ! python3 test/android-smoke.py "$adb" "$COSMO_APK" "$RUNNER_TEMP/cosmocoding-screens" "$ANDROID_TEST_API"; then
             "$adb" -s emulator-5554 logcat -d -t 180 AndroidRuntime:E chromium:E ActivityTaskManager:I '*:S' || true
             tail -n 70 "$RUNNER_TEMP/cosmo-emulator.log"
             exit 1
