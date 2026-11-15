@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1116">
+  <meta name="description" content="Sviluppa dal telefono con GPT, Claude o Gemini, rivedi il codice su GitHub e crea app installabili con GitHub Actions.">
+  <title>CosmoCoding — Sviluppa dal telefono</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav wrap">
+    <a class="brand" href="./"><span aria-hidden="true">⌘</span>Cosmo<strong>Coding</strong></a>
+    <nav aria-label="Menu"><a href="#flusso">Come funziona</a><a href="https://github.com/CosmoNetinfo/CosmoCoding">GitHub ↗</a></nav>
+  </header>
+  <main>
+    <section class="hero wrap">
+      <div>
+        <p class="eyebrow">WORKSPACE MOBILE PER SVILUPPATORI</p>
+        <h1>La tua prossima app <em>parte dal telefono.</em></h1>
+        <p class="lead">Descrivi una modifica a GPT, Claude o Gemini, rivedi il diff e apri una pull request. GitHub Actions compila i pacchetti da installare sui tuoi dispositivi.</p>
+        <div class="actions">
+          <a class="button" href="https://vibedock-mobile.comfyblade8.chatgpt.site">Apri il workspace ↗</a>
+          <a class="button alt" href="https://github.com/CosmoNetinfo/CosmoCoding#avvio-locale">Guida al progetto</a>
+        </div>
+      </div>
+      <figure class="editor" aria-label="Esempio di modifica a un progetto Flutter">
+        <div class="editor-bar"><i></i><i></i><i></i><span>vibedock_app/lib/main.dart</span></div>
+        <div class="editor-body">
+          <div class="prompt"><span>Richiesta</span><b>Aggiungi una schermata di benvenuto.</b></div>
+          <div class="line"><span>12</span> <code>return MaterialApp(</code></div>
+          <div class="line green"><span>13</span> <code>+ title: 'La mia app',</code></div>
+          <div class="line green"><span>14</span> <code>+ home: WelcomeScreen(),</code></div>
+          <div class="line"><span>15</span> <code>);</code></div>
+          <div class="editor-footer"><span class="dot"></span> Anteprima del diff <span>Pull request ↗</span></div>
+        </div>
+      </figure>
+    </section>
+    <section class="platforms wrap" aria-labelledby="targets">
+      <div><p class="eyebrow">GITHUB ACTIONS</p><h2 id="targets">Pacchetti installabili</h2></div>
+      <ul class="targets">
+        <li><b>Windows</b><span>Setup .exe · x64</span></li>
+        <li><b>macOS</b><span>.dmg · Apple Silicon</span></li>
+        <li><b>Android</b><span>.apk · debug</span></li>
+        <li><b>Linux</b><span>.deb · amd64</span></li>
+      </ul>
+      <p class="footnote">I pacchetti desktop sono per test e distribuzione diretta. Il DMG non è notarizzato e il setup Windows non è firmato.</p>
+    </section>
+    <section class="workflow wrap" id="flusso" aria-labelledby="flow-title">
+      <p class="eyebrow">DAL REPOSITORY ALL’APP</p><h2 id="flow-title">Come funziona</h2>
+      <div class="steps">
+        <article><h3>Collega il progetto</h3><p>Apri il repository GitHub, seleziona i file e scegli il modello AI. In Connessioni puoi consultare anche i tuoi progetti Supabase.</p></article>
+        <article><h3>Rivedi la proposta</h3><p>Controlla il diff, scegli quali file includere e invia la modifica su un branch dedicato con una pull request.</p></article>
+        <article><h3>Avvia la build</h3><p>Dopo il merge, avvia il workflow e scarica il pacchetto della tua piattaforma dalla pagina dell’esecuzione su GitHub.</p></article>
+      </div>
+      <a href="https://github.com/CosmoNetinfo/CosmoCoding#configurazione-dei-connettori">Configura i connettori ↗</a>
+    </section>
+  </main>
+  <footer class="wrap"><span>CosmoCoding</span><a href="https://github.com/CosmoNetinfo/CosmoCoding">Codice e documentazione ↗</a></footer>
+</body>
+</html>

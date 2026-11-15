@@ -1,0 +1,11 @@
+{
+  "name": "cosmocoding",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node dev.mjs",
+    "build": "node build.mjs",
+    "test": "node --test"
+  }
+}

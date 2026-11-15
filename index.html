@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1116">
+  <meta name="description" content="Modifica codice con GPT, Claude e Gemini, rivedi le proposte e avvia build GitHub dal telefono.">
+  <title>CosmoCoding — Workspace</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" aria-label="CosmoCoding, home"><span class="mark" aria-hidden="true">⌘</span>Cosmo<span>Coding</span></a>
+    <span class="top-note">Workspace</span>
+    <button class="button compact" data-tab="connections">⚙ <span>Connessioni</span></button>
+  </header>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="repo-label"><span class="tiny-dot"></span><span id="sidebar-repo">Nessun repository</span></div>
+      <nav aria-label="Sezioni">
+        <button data-tab="workspace" aria-current="page"><span>⌘</span> Workspace</button>
+        <button data-tab="files"><span>▤</span> File</button>
+        <button data-tab="builds"><span>◇</span> Build</button>
+        <button data-tab="connections"><span>⚙</span> Connessioni</button>
+      </nav>
+      <a class="repo-source" href="https://github.com/CosmoNetinfo/CosmoCoding" target="_blank" rel="noopener">Progetto su GitHub ↗</a>
+    </aside>
+    <main>
+      <section id="workspace" class="view">
+        <div class="intro">
+          <p class="kicker"><span class="tiny-dot"></span> WORKSPACE</p>
+          <h1>Scrivi codice.<br><em>Dal telefono.</em></h1>
+          <p class="sub">Apri un repository, descrivi la modifica e rivedi il risultato prima di inviarlo su GitHub.</p>
+          <div class="row" id="onboarding">
+            <button class="button primary" data-tab="connections">Collega GitHub <span aria-hidden="true">↗</span></button>
+            <button class="button" id="demo">Esplora il modello Flutter</button>
+          </div>
+        </div>
+        <div class="card composer">
+          <div class="card-head"><h2>Richiesta al modello</h2><span class="pill" id="context-count">0 file</span></div>
+          <form id="generate" class="stack">
+            <label class="sr" for="prompt">Richiesta</label>
+            <textarea id="prompt" required maxlength="8000" rows="4" placeholder="Descrivi cosa vuoi creare o modificare…"></textarea>
+            <div class="model-row">
+              <div class="model-fields">
+                <label><span class="sr">Provider</span><select id="provider"><option value="openai">GPT</option><option value="claude">Claude</option><option value="gemini">Gemini</option></select></label>
+                <label><span class="sr">ID modello</span><input id="model" list="models" placeholder="ID modello" required maxlength="100"><datalist id="models"></datalist></label>
+              </div>
+              <button class="button primary" type="submit">Genera proposta <span aria-hidden="true">↑</span></button>
+            </div>
+            <p class="hint" id="model-hint">I file selezionati vengono inviati al provider del modello.</p>
+          </form>
+        </div>
+        <div class="card" id="review" hidden>
+          <div class="card-head"><h2>Rivedi proposta</h2><span class="pill" id="review-count"></span></div>
+          <p id="summary" class="summary"></p>
+          <div id="changes" class="stack"></div>
+          <form id="publish" class="stack publish" hidden>
+            <label>Titolo della pull request<input id="pr-title" required maxlength="100" placeholder="Es. Aggiorna la schermata iniziale"></label>
+            <button class="button primary" type="submit">Apri pull request ↗</button>
+          </form>
+          <p id="pr-result" class="summary" hidden></p>
+        </div>
+      </section>
+      <section id="files" class="view" hidden>
+        <p class="kicker">REPOSITORY</p><h1>File</h1>
+        <p class="sub">Scegli fino a otto file da includere nella richiesta.</p>
+        <div class="card stack">
+          <div class="card-head"><h2 id="file-title">Nessun repository aperto</h2><span id="branch-label" class="pill" hidden></span></div>
+          <div class="row">
+            <button class="button" data-tab="connections">Apri repository</button>
+            <button class="button" id="scaffold" hidden>Prepara modello Flutter</button>
+          </div>
+          <label id="search-label" hidden>Cerca file<input id="search" type="search" placeholder="Cerca per percorso"></label>
+          <div id="files-list"></div>
+          <p class="hint" id="files-note"></p>
+        </div>
+        <div id="file-preview" class="card" hidden><div class="card-head"><h2 id="preview-title"></h2></div><pre id="preview-code"></pre></div>
+      </section>
+      <section id="builds" class="view" hidden>
+        <p class="kicker">GITHUB ACTIONS</p><h1>Build</h1>
+        <p class="sub">Compila l’app sui runner GitHub e scarica i pacchetti dalla pagina della build.</p>
+        <div class="targets">
+          <article><span class="target-icon">⊞</span><b>Windows</b><span>Setup .exe · x64</span></article>
+          <article><span class="target-icon">⌘</span><b>macOS</b><span>.dmg · Apple Silicon</span></article>
+          <article><span class="target-icon">☊</span><b>Android</b><span>.apk · debug</span></article>
+          <article><span class="target-icon">◈</span><b>Linux</b><span>.deb · amd64</span></article>
+        </div>
+        <div class="card stack">
+          <div class="card-head"><h2>Esecuzioni</h2><span class="pill">workflow manuale</span></div>
+          <p class="hint">Integra il modello Flutter nel branch predefinito prima di avviare la prima build.</p>
+          <div class="row">
+            <button class="button primary" id="run-build">Avvia build</button>
+            <button class="button" id="refresh-build">Aggiorna</button>
+          </div>
+          <div id="runs"><p class="hint">Apri un repository per vedere le esecuzioni.</p></div>
+        </div>
+      </section>
+      <section id="connections" class="view" hidden>
+        <p class="kicker">IMPOSTAZIONI</p><h1>Connessioni</h1>
+        <p class="sub">Usa le tue credenziali API. Vengono tenute in questa scheda fino alla chiusura o al ricaricamento.</p>
+        <form class="card stack" id="connect-github">
+          <div class="card-head"><h2>GitHub</h2><span class="pill">Repository</span></div>
+          <label>Token GitHub<input id="github-token" type="password" autocomplete="off" required placeholder="Token personale fine-grained"></label>
+          <div class="form-two">
+            <label>Repository<input id="repo" placeholder="proprietario/repository" list="repos" autocapitalize="off" spellcheck="false"><datalist id="repos"></datalist></label>
+            <label>Branch (facoltativo)<input id="branch" placeholder="Branch predefinito" autocapitalize="off" spellcheck="false"></label>
+          </div>
+          <div class="row"><button class="button primary" type="submit">Apri repository</button><button class="button" id="list-repos" type="button">Elenca repository</button></div>
+          <p class="hint">Usa <strong>Contents</strong> e <strong>Pull requests</strong> in scrittura per creare PR, <strong>Workflows</strong> in scrittura per aggiungere la pipeline e <strong>Actions</strong> in scrittura per avviarla.</p>
+        </form>
+        <form class="card stack" id="connect-model">
+          <div class="card-head"><h2>Modelli AI</h2><span class="pill" id="registered-providers">0 collegati</span></div>
+          <div class="form-two">
+            <label>Provider<select id="connect-provider"><option value="openai">OpenAI · GPT</option><option value="claude">Anthropic · Claude</option><option value="gemini">Google · Gemini</option></select></label>
+            <label>Chiave API<input id="api-key" type="password" required autocomplete="off" placeholder="Incolla la chiave API"></label>
+          </div>
+          <button class="button primary" type="submit">Verifica e collega</button>
+          <p id="model-status" class="hint">Collega uno o più provider e scegli il modello nel workspace.</p>
+        </form>
+        <form class="card stack" id="connect-supabase">
+          <div class="card-head"><h2>Supabase</h2><span class="pill">Progetti</span></div>
+          <label>Token Management API<input id="supabase-token" type="password" required autocomplete="off" placeholder="Token di accesso personale"></label>
+          <button class="button" type="submit">Carica progetti</button>
+          <div id="projects"></div>
+        </form>
+      </section>
+      <p id="notice" role="status" aria-live="polite" hidden></p>
+    </main>
+  </div>
+  <nav class="bottom" aria-label="Navigazione mobile">
+    <button data-tab="workspace" aria-current="page"><span>⌘</span>Workspace</button>
+    <button data-tab="files"><span>▤</span>File</button>
+    <button data-tab="builds"><span>◇</span>Build</button>
+    <button data-tab="connections"><span>⚙</span>Connessioni</button>
+  </nav>
+</body>
+</html>
