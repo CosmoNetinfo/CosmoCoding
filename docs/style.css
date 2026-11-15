@@ -5,7 +5,7 @@ a{color:var(--mint);text-underline-offset:4px}a:focus-visible{outline:2px solid 
 .nav{display:flex;align-items:center;justify-content:space-between;min-height:76px;gap:14px;border-bottom:1px solid var(--line)}
 .nav nav{display:flex;gap:22px}.nav nav a,footer a{color:var(--muted);text-decoration:none;font-size:14px}.nav nav a:hover,footer a:hover{color:var(--mint)}
 .brand{display:flex;gap:0;align-items:center;color:var(--ink);font-size:22px;letter-spacing:-.05em;font-weight:700;text-decoration:none;white-space:nowrap}
-.brand span{display:grid;place-items:center;background:var(--mint);color:#112821;width:33px;height:33px;border-radius:8px;margin-right:9px}.brand strong{color:var(--mint)}
+.brand img{display:block;border:1px solid var(--line);border-radius:8px;margin-right:9px}.brand strong{color:var(--mint)}
 .hero{display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:clamp(25px,6vw,80px);padding:clamp(64px,11vw,138px) 0}
 .eyebrow{font-size:12px;font-weight:750;letter-spacing:.155em;color:var(--mint);margin:0 0 12px}
 h1,h2,h3{margin:0;letter-spacing:-.045em;line-height:1.06}

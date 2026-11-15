@@ -12,7 +12,7 @@ const assets = {
   '/starter.json': ['application/json; charset=utf-8', JSON.stringify(starter)]
 }
 for (const size of [192, 512]) {
-  const path = `/icon-${size}.png`
+  const path = `/cosmocoding-icon-${size}.png`
   const image = await readFile(new URL(path.slice(1), root))
   assets[path] = ['image/png', image.toString('base64')]
 }
