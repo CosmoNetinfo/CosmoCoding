@@ -1,0 +1,193 @@
+name: Release CosmoCoding
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cosmocoding-release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+        with:
+          node-version: '24'
+      - name: Verifica sorgente e versioni
+        id: version
+        shell: bash
+        run: |
+          npm test
+          npm run build
+          node desktop/prepare.mjs
+          node android/prepare.mjs
+          version="$(node -p 'require("./package.json").version')"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test "$(node -p 'require("./desktop/package.json").version')" = "$version"
+          grep -Fx "        versionName '$version'" android/app/build.gradle
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+  desktop:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: windows
+            runner: windows-2025
+            target: --win nsis --x64
+            extension: exe
+          - name: macos
+            runner: macos-15
+            target: --mac dmg --arm64
+            extension: dmg
+          - name: linux
+            runner: ubuntu-24.04
+            target: --linux deb --x64
+            extension: deb
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Installa strumento per pacchetti Debian
+        if: matrix.name == 'linux'
+        run: sudo apt-get install -y fakeroot xvfb
+      - run: npm ci --no-audit --no-fund
+      - name: Compila installer
+        env:
+          TARGET: ${{ matrix.target }}
+        run: npm run package -- $TARGET
+      - name: Verifica il pacchetto
+        env:
+          PLATFORM: ${{ matrix.name }}
+          EXTENSION: ${{ matrix.extension }}
+        run: |
+          shopt -s nullglob
+          files=(release/*."$EXTENSION")
+          test "${#files[@]}" = 1
+          package="${files[0]}"
+          test -s "$package"
+          case "$PLATFORM" in
+            linux)
+              dpkg-deb --field "$package" Package Version Architecture
+              sudo apt-get install -y "$PWD/$package"
+              timeout 40s xvfb-run -a cosmocoding --cosmocoding-smoke
+              ;;
+            macos)
+              hdiutil verify "$package"
+              node smoke.mjs release/mac-arm64/CosmoCoding.app/Contents/MacOS/CosmoCoding
+              ;;
+            windows)
+              file "$package" | grep -F 'PE32'
+              node smoke.mjs release/win-unpacked/CosmoCoding.exe
+              ;;
+          esac
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: installer-${{ matrix.name }}
+          path: desktop/release/*.${{ matrix.extension }}
+          if-no-files-found: error
+
+  android:
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+        with:
+          node-version: '24'
+      - name: Compila e firma l’APK di anteprima
+        shell: bash
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          export JAVA_HOME="$JAVA_HOME_17_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          distribution="$RUNNER_TEMP/gradle-8.11.1-bin.zip"
+          curl --fail --silent --show-error --location --retry 3 https://services.gradle.org/distributions/gradle-8.11.1-bin.zip --output "$distribution"
+          printf '%s  %s\n' f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6 "$distribution" | sha256sum --check
+          unzip -q "$distribution" -d "$RUNNER_TEMP"
+          sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          "$sdk/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
+          node android/prepare.mjs
+          "$RUNNER_TEMP/gradle-8.11.1/bin/gradle" --no-daemon -p android :app:assembleRelease
+          tools="$sdk/build-tools/35.0.0"
+          apk="packages/CosmoCoding-$VERSION-Android-preview.apk"
+          mkdir -p packages
+          "$tools/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/cosmocoding-aligned.apk"
+          keytool -genkeypair -keystore "$RUNNER_TEMP/preview.p12" -storetype PKCS12 -storepass preview-only -keypass preview-only -alias cosmocoding-preview -dname 'CN=CosmoCoding Preview' -keyalg RSA -keysize 2048 -validity 730
+          "$tools/apksigner" sign --ks "$RUNNER_TEMP/preview.p12" --ks-pass pass:preview-only --out "$apk" "$RUNNER_TEMP/cosmocoding-aligned.apk"
+          "$tools/apksigner" verify --verbose "$apk"
+          "$tools/aapt" dump badging "$apk" | sed -n '1p'
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: installer-android
+          path: packages/*.apk
+          if-no-files-found: error
+
+  publish:
+    needs: [verify, desktop, android]
+    runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          pattern: installer-*
+          path: packages
+          merge-multiple: true
+      - name: Pubblica anteprima e checksum
+        shell: bash
+        working-directory: packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          shopt -s nullglob
+          installers=(*.exe *.dmg *.apk *.deb)
+          test "${#installers[@]}" = 4
+          for installer in "${installers[@]}"; do test -s "$installer"; done
+          sha256sum "${installers[@]}" > SHA256SUMS.txt
+          tag="v$VERSION"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::La release $tag esiste già. Aggiorna la versione per pubblicarne un’altra."
+            exit 1
+          fi
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          Prima anteprima di CosmoCoding con la mascotte e il workspace integrato. GitHub, GPT, Claude, Gemini e Supabase usano le credenziali inserite nell’app.
+
+          - **Windows x64** — esegui il setup `.exe`. Il setup non è firmato.
+          - **macOS Apple Silicon** — monta il `.dmg` e trascina l’app in Applicazioni. Il pacchetto non è notarizzato.
+          - **Android 11 o successivo** — installa l’APK di anteprima firmato per questa build. Per installare una futura anteprima firmata con un’altra chiave potrebbe servire disinstallare questa versione.
+          - **Ubuntu/Debian amd64** — installa il `.deb` con `sudo apt install ./nome-del-pacchetto.deb`.
+
+          I checksum SHA-256 degli installer sono in `SHA256SUMS.txt`.
+          NOTES
+          gh release create "$tag" "${installers[@]}" SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "CosmoCoding $tag · Anteprima" --notes-file "$RUNNER_TEMP/release-notes.md"

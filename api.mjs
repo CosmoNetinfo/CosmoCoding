@@ -1,4 +1,5 @@
 import { starter, workflowPath } from './template.mjs'
+import { fetchProvider } from './upstream.mjs'
 
 const MAX_TEXT = 48_000
 const enc = encodeURIComponent
@@ -32,7 +33,7 @@ function safePath(path) {
 async function call(url, { method = 'GET', headers, body } = {}) {
   let response
   try {
-    response = await fetch(url, {
+    response = await fetchProvider(url, {
       method, headers: { ...headers, ...(body === undefined ? {} : { 'content-type': 'application/json' }) },
       body: body === undefined ? undefined : JSON.stringify(body),
       redirect: 'error', signal: AbortSignal.timeout(95_000)

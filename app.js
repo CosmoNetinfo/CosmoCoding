@@ -3,6 +3,8 @@ const state = { auth: new Map(), selected: new Set(), contents: new Map(), snaps
 const providerNames = { openai: 'GPT', claude: 'Claude', gemini: 'Gemini' }
 let busy = false
 let noticeTimer
+const nativeTransport = typeof globalThis.CosmoNative?.send === 'function'
+  ? import('/native-transport.mjs') : null
 
 function node(tag, text, className) {
   const item = document.createElement(tag)
@@ -63,9 +65,11 @@ function run(callback, button, label = 'Attendi…') {
 }
 
 async function api(operation, body) {
-  const result = await fetch('/api/' + operation, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body)
-  })
+  const result = nativeTransport
+    ? await (await nativeTransport).request(operation, body)
+    : await fetch('/api/' + operation, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body)
+    })
   const data = await result.json().catch(() => null)
   if (!result.ok || !data) throw new Error(data?.error || 'Il server non ha risposto. Ricarica la pagina e riprova.')
   return data
@@ -335,4 +339,4 @@ $('connect-supabase').addEventListener('submit', run(async () => {
   notice(projects.length + ' progetti Supabase caricati.')
 }))
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {})
+if (!nativeTransport && 'serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {})

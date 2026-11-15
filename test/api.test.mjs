@@ -15,6 +15,28 @@ test('blocca richieste da un’origine diversa prima di contattare i provider', 
   assert.equal(remote.mock.callCount(), 0)
 })
 
+test('Android usa lo stesso connettore attraverso il bridge nativo', async t => {
+  const bridge = {
+    send(id, url, method, headers, body) {
+      assert.equal(url, 'https://api.supabase.com/v1/projects')
+      assert.equal(method, 'GET')
+      assert.deepEqual(JSON.parse(headers), { authorization: 'Bearer fixture-token' })
+      assert.equal(body, '')
+      queueMicrotask(() => globalThis.cosmoNativeReply(id, 200, JSON.stringify([
+        { name: 'Progetto test', ref: 'test', region: 'eu-west-1', status: 'ACTIVE_HEALTHY' }
+      ])))
+    }
+  }
+  globalThis.CosmoNative = bridge
+  t.after(() => {
+    delete globalThis.CosmoNative
+    delete globalThis.cosmoNativeReply
+  })
+  const response = await send('/api/supabase', { token: 'fixture-token' })
+  assert.equal(response.status, 200)
+  assert.equal((await response.json()).projects[0].name, 'Progetto test')
+})
+
 test('invia i file al provider scelto e scarta i percorsi estranei', async t => {
   t.mock.method(globalThis, 'fetch', (url, options) => {
     assert.equal(url, 'https://api.openai.com/v1/responses')

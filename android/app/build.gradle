@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.application' version '8.10.1'
+}
+
+android {
+    namespace 'info.cosmonet.cosmocoding'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'info.cosmonet.cosmocoding'
+        minSdk 30
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir layout.buildDirectory.dir('generated/workspace/assets')
+            res.srcDir layout.buildDirectory.dir('generated/workspace/res')
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

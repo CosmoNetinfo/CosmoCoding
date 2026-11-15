@@ -1,0 +1,48 @@
+{
+  "name": "cosmocoding-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "main.mjs",
+  "description": "CosmoCoding, workspace per sviluppare con AI e GitHub.",
+  "author": {
+    "name": "CosmoNetinfo",
+    "email": "4959811+CosmoNetinfo@users.noreply.github.com"
+  },
+  "homepage": "https://cosmonetinfo.github.io/CosmoCoding/",
+  "scripts": {
+    "prepare:app": "node prepare.mjs",
+    "start": "node prepare.mjs && electron .",
+    "package": "node prepare.mjs && electron-builder --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.11.3",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "info.cosmonet.cosmocoding",
+    "productName": "CosmoCoding",
+    "directories": {"output": "release"},
+    "files": ["main.mjs", "server.mjs", "generated/workspace.mjs", "generated/icon.png"],
+    "win": {
+      "target": "nsis",
+      "icon": "generated/icon.png",
+      "artifactName": "CosmoCoding-${version}-Windows-${arch}-Setup.${ext}"
+    },
+    "nsis": {"oneClick": true, "perMachine": false},
+    "mac": {
+      "target": "dmg",
+      "icon": "generated/icon.png",
+      "category": "public.app-category.developer-tools",
+      "identity": "-",
+      "artifactName": "CosmoCoding-${version}-macOS-${arch}.${ext}"
+    },
+    "linux": {
+      "target": "deb",
+      "executableName": "cosmocoding",
+      "icon": "generated/icon.png",
+      "category": "Development",
+      "artifactName": "CosmoCoding-${version}-Linux-${arch}.${ext}"
+    }
+  }
+}

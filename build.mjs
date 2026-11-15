@@ -17,10 +17,11 @@ for (const size of [192, 512]) {
   assets[path] = ['image/png', image.toString('base64')]
 }
 
-const api = (await text('api.mjs')).replace(/^import [^\n]+\r?\n/, '').replace('export async function handleApi', 'async function handleApi')
+const api = (await text('api.mjs')).replace(/^import [^\n]+\r?\n/gm, '').replace('export async function handleApi', 'async function handleApi')
 const template = (await text('template.mjs')).replaceAll('export const ', 'const ')
+const upstream = (await text('upstream.mjs')).replace('export function fetchProvider', 'function fetchProvider')
 const worker = (await text('worker.mjs')).replace('/* ASSET_MAP */ null', JSON.stringify(assets))
 const target = new URL('dist/server/', root)
 await mkdir(target, { recursive: true })
-await writeFile(new URL('index.js', target), [template, api, worker].join('\n'))
+await writeFile(new URL('index.js', target), [template, upstream, api, worker].join('\n'))
 console.log('Worker pronto in dist/server/index.js')

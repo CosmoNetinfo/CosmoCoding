@@ -4,6 +4,19 @@
 
 [Apri il workspace](https://vibedock-mobile.comfyblade8.chatgpt.site) · [Visita la landing](https://cosmonetinfo.github.io/CosmoCoding/)
 
+## Scarica CosmoCoding
+
+Gli installer del workspace e i checksum SHA-256 sono su [GitHub Releases](https://github.com/CosmoNetinfo/CosmoCoding/releases). Le app usano il workspace integrato e inviano le richieste ai servizi che colleghi con le tue credenziali.
+
+| Sistema | Installazione dell’anteprima |
+| --- | --- |
+| Windows x64 | Apri il setup `.exe` non firmato. |
+| macOS Apple Silicon | Monta il `.dmg` non notarizzato e trascina CosmoCoding in Applicazioni. |
+| Android 11+ | Installa l’APK firmato per l’anteprima. Se un’anteprima successiva usa un certificato diverso, disinstalla prima la versione precedente. |
+| Ubuntu/Debian amd64 | Usa `sudo apt install ./CosmoCoding-<versione>-Linux-x64.deb`. |
+
+Il workflow manuale **Release CosmoCoding** compila gli installer del workspace e pubblica la prerelease su GitHub quando tutti i pacchetti sono disponibili.
+
 ## Dal prompt alla pull request
 
 1. In **Connessioni**, aggiungi il token GitHub e apri il repository e il branch. Un repository nuovo deve avere un commit iniziale, per esempio un README.
@@ -25,7 +38,7 @@ Il modello modifica i file esistenti selezionati. Per aggiungere i file iniziali
 
 Le credenziali vengono usate dal backend per chiamare il servizio selezionato e tenute in memoria nella scheda. Ricaricare la pagina azzera la sessione. I provider AI applicano le quote e la fatturazione del proprio account API.
 
-## Pacchetti installabili con GitHub Actions
+## Crea pacchetti installabili per il tuo progetto
 
 Integra la PR del modello Flutter nel branch predefinito. Per avviare il workflow **Pacchetti installabili**, usa la scheda **Build** oppure **Actions** su GitHub. Apri l’esecuzione e scarica l’archivio **Artifacts** della piattaforma desiderata.
 
