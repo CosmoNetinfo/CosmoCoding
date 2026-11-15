@@ -107,7 +107,7 @@ public final class WorkspaceActivity extends Activity {
 
     private static boolean externalLink(String host) {
         return host != null && ("github.com".equals(host) || "supabase.com".equals(host)
-            || "vercel.com".equals(host) || host.matches("[a-z0-9-]+\\.vercel\\.app"));
+            || "vercel.com".equals(host) || "cosmonetinfo.github.io".equals(host) || host.matches("[a-z0-9-]+\\.vercel\\.app"));
     }
 
     private static String assetType(String path) {

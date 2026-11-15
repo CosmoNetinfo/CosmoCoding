@@ -68,6 +68,10 @@ input[type=checkbox]{accent-color:var(--accent);width:17px;height:17px}
 .item span{font-size:13px;color:var(--muted)}
 details{border:1px solid var(--edge);border-radius:8px;overflow:hidden}
 summary{padding:10px 12px;cursor:pointer;overflow-wrap:anywhere}
+.connection-guide{background:var(--panel)}
+.connection-guide summary{font-weight:650;padding:12px 15px}
+.connection-guide>.stack{padding:0 15px 15px}
+.connection-guide nav a{padding:7px 9px;border:1px solid var(--edge);border-radius:7px;text-decoration:none;font-size:14px}
 pre{margin:0;padding:13px;overflow:auto;max-height:455px;background:#0a1015;border-radius:7px;font:13px/1.55 Consolas,monospace;tab-size:4}
 pre span{display:block;min-height:1.55em}
 .diff-added{color:#9bebba;background:#153625}

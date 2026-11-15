@@ -28,12 +28,14 @@ Il modello modifica i file esistenti selezionati. Per aggiungere i file iniziali
 
 ## Configurazione dei connettori
 
+La [guida completa](https://cosmonetinfo.github.io/CosmoCoding/guida.html) mostra dove creare ogni credenziale, quali permessi assegnare e in quale campo incollarla. La trovi anche in **Connessioni → Dove trovo i token?**.
+
 | Servizio | Cosa inserire | Accesso usato |
 | --- | --- | --- |
 | [GitHub](https://github.com/settings/personal-access-tokens/new) | Token personale fine-grained limitato ai repository necessari | **Contents** in lettura per esplorare il repo. **Contents** e **Pull requests** in scrittura per la PR. Aggiungi **Workflows** in scrittura per il modello Flutter e **Actions** in scrittura per avviare le build. |
 | [OpenAI](https://platform.openai.com/api-keys) | Chiave API di un progetto con accesso ai modelli GPT | Elenco modelli e generazione via Responses API. |
 | [Anthropic](https://platform.claude.com/settings/keys) | Chiave API Claude | Elenco modelli e generazione via Messages API. |
-| [Google](https://aistudio.google.com/api-keys) | Chiave API Gemini | Elenco dei modelli e generazione. |
+| [Google](https://aistudio.google.com/apikey) | Chiave API Gemini | Elenco dei modelli e generazione. |
 | [Supabase](https://supabase.com/dashboard/account/tokens) | Token Management API con accesso alla lettura dei progetti | Elenco progetti e collegamenti ai rispettivi dashboard. |
 | [Vercel](https://vercel.com/account/tokens) | Token di accesso Vercel per l’account o il team. Per selezionare un team, inserisci il suo ID o slug. | Elenco progetti, stato dei deploy di produzione e anteprima, apertura degli URL e del dashboard. |
 

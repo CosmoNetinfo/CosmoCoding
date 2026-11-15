@@ -184,6 +184,8 @@ jobs:
           cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
           Anteprima di CosmoCoding con la mascotte e il workspace integrato. GitHub, GPT, Claude, Gemini, Supabase e Vercel usano le credenziali inserite nell’app.
 
+          La [guida dei connettori](https://cosmonetinfo.github.io/CosmoCoding/guida.html) è disponibile da **Connessioni → Dove trovo i token?**.
+
           - **Windows x64** — esegui il setup `.exe`. Il setup non è firmato.
           - **macOS Apple Silicon** — monta il `.dmg` e trascina l’app in Applicazioni. Il pacchetto non è notarizzato.
           - **Android 8 o successivo** — installa l’APK di anteprima e usa una versione aggiornata di Android System WebView. Se è già installata un’anteprima con un certificato diverso, disinstallala prima.

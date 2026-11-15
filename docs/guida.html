@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1116">
+  <meta name="description" content="Come creare e usare i token GitHub, OpenAI, Claude, Gemini, Supabase e Vercel in CosmoCoding.">
+  <title>Guida alla configurazione · CosmoCoding</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="cosmocoding-icon-192.png">
+</head>
+<body>
+  <header class="nav wrap">
+    <a class="brand" href="./"><img src="cosmocoding-icon-192.png" alt="" width="34" height="34">Cosmo<strong>Coding</strong></a>
+    <nav aria-label="Menu"><a href="./">Landing</a><a href="https://vibedock-mobile.comfyblade8.chatgpt.site">Workspace ↗</a></nav>
+  </header>
+  <main class="wrap guide">
+    <div class="guide-intro">
+      <p class="eyebrow">CONFIGURAZIONE</p>
+      <h1>Guida a <em>CosmoCoding</em></h1>
+      <p class="lead">Apri l’app e vai in <strong>Connessioni</strong>. Collega GitHub e un modello AI per lavorare sul codice. Aggiungi Supabase e Vercel quando ti servono.</p>
+      <nav aria-label="Vai al servizio" class="guide-links">
+        <a href="#github">GitHub</a><a href="#openai">OpenAI</a><a href="#claude">Claude</a>
+        <a href="#gemini">Gemini</a><a href="#supabase">Supabase</a><a href="#vercel">Vercel</a>
+        <a href="#prima-modifica">Prima modifica</a><a href="#problemi">Errori di accesso</a>
+      </nav>
+    </div>
+    <section id="github" class="guide-section">
+      <h2>GitHub</h2>
+      <ol>
+        <li>Apri <a href="https://github.com/settings/personal-access-tokens/new">Crea un token fine-grained su GitHub</a>. Dagli un nome e scegli una scadenza.</li>
+        <li>In <strong>Resource owner</strong> seleziona il proprietario del repository. In <strong>Repository access</strong> scegli <strong>Only select repositories</strong> e seleziona i repository da usare.</li>
+        <li>In <strong>Repository permissions</strong> assegna i permessi che servono alle operazioni che vuoi usare.</li>
+      </ol>
+      <dl class="permissions">
+        <div><dt>Leggere file</dt><dd><strong>Contents</strong> in lettura.</dd></div>
+        <div><dt>Creare branch e pull request</dt><dd><strong>Contents</strong> e <strong>Pull requests</strong> in lettura e scrittura.</dd></div>
+        <div><dt>Aggiungere il workflow Flutter</dt><dd>Aggiungi <strong>Workflows</strong> in scrittura ai permessi per la pull request.</dd></div>
+        <div><dt>Consultare o avviare build</dt><dd><strong>Actions</strong> in lettura per consultarle, in lettura e scrittura per avviarle.</dd></div>
+      </dl>
+      <ol start="4">
+        <li>Genera e copia il token. Nell’app apri <strong>Connessioni → GitHub</strong> e incollalo in <strong>Token GitHub</strong>.</li>
+        <li>In <strong>Repository</strong> inserisci <code>proprietario/nome-repo</code> oppure usa <strong>Elenca repository</strong>. Lascia <strong>Branch</strong> vuoto per usare quello predefinito, poi premi <strong>Apri repository</strong>.</li>
+      </ol>
+      <p>Un repository nuovo deve avere almeno un commit, per esempio un README. Se l’organizzazione richiede l’approvazione del token, attendi che un amministratore la confermi.</p>
+      <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens">Documentazione GitHub ↗</a>
+    </section>
+    <section id="openai" class="guide-section">
+      <h2>GPT di OpenAI</h2>
+      <ol>
+        <li>Accedi alla <a href="https://platform.openai.com/api-keys">pagina delle chiavi API OpenAI</a>, seleziona il progetto e scegli <strong>Create new secret key</strong>.</li>
+        <li>Se limiti i permessi della chiave, abilita la lettura dei modelli e l’uso della Responses API per generare le proposte. Il progetto deve avere accesso al modello che scegli.</li>
+        <li>Nell’app vai in <strong>Connessioni → Modelli AI</strong>, scegli <strong>OpenAI · GPT</strong>, incolla il valore in <strong>Chiave API</strong> e premi <strong>Verifica e collega</strong>.</li>
+      </ol>
+      <a href="https://developers.openai.com/api/docs/quickstart">Documentazione OpenAI ↗</a>
+    </section>
+    <section id="claude" class="guide-section">
+      <h2>Claude di Anthropic</h2>
+      <ol>
+        <li>Accedi alle <a href="https://platform.claude.com/settings/keys">chiavi API della Claude Console</a> e crea una chiave associata al workspace che vuoi usare.</li>
+        <li>Nell’app vai in <strong>Connessioni → Modelli AI</strong>, scegli <strong>Anthropic · Claude</strong>, incolla il valore in <strong>Chiave API</strong> e premi <strong>Verifica e collega</strong>.</li>
+      </ol>
+      <a href="https://platform.claude.com/docs/en/api/overview">Documentazione Claude ↗</a>
+    </section>
+    <section id="gemini" class="guide-section">
+      <h2>Gemini di Google</h2>
+      <ol>
+        <li>Accedi alla <a href="https://aistudio.google.com/apikey">pagina API keys di Google AI Studio</a>. Crea una chiave Gemini nel progetto Google che vuoi usare.</li>
+        <li>Nell’app vai in <strong>Connessioni → Modelli AI</strong>, scegli <strong>Google · Gemini</strong>, incolla il valore in <strong>Chiave API</strong> e premi <strong>Verifica e collega</strong>.</li>
+      </ol>
+      <p>Dopo aver collegato uno o più provider, scegli il provider e il modello in <strong>Workspace</strong>. Le richieste sono soggette a quote e fatturazione del progetto API del provider.</p>
+      <a href="https://ai.google.dev/gemini-api/docs/api-key">Documentazione Gemini ↗</a>
+    </section>
+    <section id="supabase" class="guide-section">
+      <h2>Supabase</h2>
+      <ol>
+        <li>Apri <a href="https://supabase.com/dashboard/account/tokens">Access Tokens nel tuo account Supabase</a> e genera un <strong>Personal Access Token</strong> per la Management API.</li>
+        <li>Per un token con permessi granulari, concedi <strong>Projects (account-wide)</strong> in lettura per l’elenco dei progetti.</li>
+        <li>Vai in <strong>Connessioni → Supabase</strong>, incollalo in <strong>Token Management API</strong> e premi <strong>Carica progetti</strong>.</li>
+      </ol>
+      <p>Per questa schermata serve il token personale dell’account. Le chiavi <code>anon</code> e <code>service_role</code> sono credenziali del singolo progetto.</p>
+      <a href="https://supabase.com/docs/guides/platform/personal-access-tokens">Documentazione Supabase ↗</a>
+    </section>
+    <section id="vercel" class="guide-section">
+      <h2>Vercel</h2>
+      <ol>
+        <li>Apri <a href="https://vercel.com/account/tokens">Access Tokens di Vercel</a>. Crea un token, scegli una scadenza e seleziona lo scope dell’account o del team che contiene i progetti.</li>
+        <li>Vai in <strong>Connessioni → Vercel</strong> e incollalo in <strong>Token Vercel</strong>. Per un team puoi inserire anche il suo slug o il Team ID, che trovi nelle impostazioni del team.</li>
+        <li>Premi <strong>Collega Vercel</strong>, seleziona il progetto e usa <strong>Carica deploy</strong>. Dall’elenco puoi vedere stato e ambiente, aprire il deploy o passare alla dashboard.</li>
+      </ol>
+      <a href="https://vercel.com/docs/rest-api">Documentazione Vercel ↗</a>
+    </section>
+    <section id="prima-modifica" class="guide-section">
+      <h2>Prima modifica e build</h2>
+      <ol>
+        <li>Apri un repository con GitHub e collega almeno un modello AI. In <strong>File</strong>, seleziona fino a otto file da usare come contesto.</li>
+        <li>In <strong>Workspace</strong> descrivi la modifica e premi <strong>Genera proposta</strong>. Controlla il diff e usa <strong>Apri pull request</strong> per inviare i file selezionati su un branch dedicato.</li>
+        <li>Per creare un’app Flutter, usa <strong>File → Prepara modello Flutter</strong> in un repository senza i file del modello. Integra la relativa PR nel branch predefinito, riapri quel branch in CosmoCoding e poi usa <strong>Build → Avvia build</strong>.</li>
+        <li>Apri l’esecuzione su GitHub Actions e scarica il pacchetto della piattaforma dalla sezione <strong>Artifacts</strong>.</li>
+      </ol>
+    </section>
+    <section id="problemi" class="guide-section">
+      <h2>Errori di accesso</h2>
+      <dl class="permissions">
+        <div><dt>401 · Credenziale rifiutata</dt><dd>Ricopia il valore dal servizio e verifica la scadenza. Se non è più visibile, crea una nuova chiave.</dd></div>
+        <div><dt>403 · Permessi insufficienti</dt><dd>Verifica i permessi e il repository, progetto o team associato al token.</dd></div>
+        <div><dt>404 · Risorsa non accessibile</dt><dd>Controlla il nome del repository e del branch, poi verifica che il token abbia accesso.</dd></div>
+        <div><dt>429 · Limite API</dt><dd>Controlla quota, budget e limiti del provider prima di riprovare.</dd></div>
+      </dl>
+      <p>Incolla le credenziali solo nei campi di <strong>Connessioni</strong>. CosmoCoding le tiene in memoria per la sessione. Dopo aver chiuso o ricaricato il workspace, collegale di nuovo.</p>
+    </section>
+  </main>
+  <footer class="wrap"><span>CosmoCoding</span><a href="./">Torna alla landing ↗</a></footer>
+</body>
+</html>

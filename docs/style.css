@@ -39,6 +39,22 @@ h2{font-size:clamp(35px,5vw,55px)}
 .steps{grid-template-columns:repeat(3,1fr)}
 .steps p{margin:10px 0 0}
 footer{display:flex;justify-content:space-between;gap:14px;padding:20px 0 35px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.guide{max-width:900px}
+.guide-intro{padding:clamp(44px,9vw,95px) 0 32px}
+.guide-intro h1{font-size:clamp(40px,7vw,72px);overflow-wrap:anywhere}
+.guide-links{display:flex;flex-wrap:wrap;gap:8px}
+.guide-links a{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#141c23;text-decoration:none}
+.guide-section{padding:28px 0 36px;border-top:1px solid var(--line);scroll-margin-top:12px}
+.guide-section h2{font-size:clamp(30px,5vw,43px)}
+.guide-section li,.guide-section p,.guide-section dd{color:var(--muted)}
+.guide-section strong,.guide-section dt{color:var(--ink)}
+.guide-section ol{padding-left:1.4em}
+.guide-section li+li{margin-top:8px}
+.guide-section code{overflow-wrap:anywhere}
+.permissions{display:grid;gap:6px;margin:14px 0}
+.permissions>div{padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#141c23}
+.permissions dt{font-weight:700}
+.permissions dd{margin:1px 0 0}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding:62px 0}.steps{grid-template-columns:1fr}.nav nav a:first-child{display:none}}
 @media(max-width:520px){.targets{grid-template-columns:1fr 1fr}.wrap{width:calc(100% - 32px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

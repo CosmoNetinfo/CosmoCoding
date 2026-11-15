@@ -103,6 +103,21 @@
       <section id="connections" class="view" hidden>
         <p class="kicker">IMPOSTAZIONI</p><h1>Connessioni</h1>
         <p class="sub">Usa le tue credenziali API. Vengono tenute in questa scheda fino alla chiusura o al ricaricamento.</p>
+        <details class="connection-guide">
+          <summary>Dove trovo i token?</summary>
+          <div class="stack">
+            <p class="hint">Scegli il servizio per vedere dove creare la credenziale, quali permessi assegnare e dove incollarla.</p>
+            <nav class="row" aria-label="Istruzioni per i connettori">
+              <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#github" target="_blank" rel="noopener">GitHub</a>
+              <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#openai" target="_blank" rel="noopener">OpenAI</a>
+              <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#claude" target="_blank" rel="noopener">Claude</a>
+              <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#gemini" target="_blank" rel="noopener">Gemini</a>
+              <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#supabase" target="_blank" rel="noopener">Supabase</a>
+              <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#vercel" target="_blank" rel="noopener">Vercel</a>
+            </nav>
+            <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html" target="_blank" rel="noopener">Guida completa e risoluzione degli errori ↗</a>
+          </div>
+        </details>
         <form class="card stack" id="connect-github">
           <div class="card-head"><h2>GitHub</h2><span class="pill">Repository</span></div>
           <label>Token GitHub<input id="github-token" type="password" autocomplete="off" required placeholder="Token personale fine-grained"></label>
@@ -111,7 +126,7 @@
             <label>Branch (facoltativo)<input id="branch" placeholder="Branch predefinito" autocapitalize="off" spellcheck="false"></label>
           </div>
           <div class="row"><button class="button primary" type="submit">Apri repository</button><button class="button" id="list-repos" type="button">Elenca repository</button></div>
-          <p class="hint">Usa <strong>Contents</strong> e <strong>Pull requests</strong> in scrittura per creare PR, <strong>Workflows</strong> in scrittura per aggiungere la pipeline e <strong>Actions</strong> in scrittura per avviarla.</p>
+          <p class="hint">Per leggere i file usa <strong>Contents</strong> in lettura. Per creare PR, aggiungere la pipeline o avviare build consulta i <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#github" target="_blank" rel="noopener">permessi GitHub</a>.</p>
         </form>
         <form class="card stack" id="connect-model">
           <div class="card-head"><h2>Modelli AI</h2><span class="pill" id="registered-providers">0 collegati</span></div>
@@ -121,10 +136,12 @@
           </div>
           <button class="button primary" type="submit">Verifica e collega</button>
           <p id="model-status" class="hint">Collega uno o più provider e scegli il modello nel workspace.</p>
+          <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#openai" target="_blank" rel="noopener">Come creare le chiavi dei modelli AI ↗</a>
         </form>
         <form class="card stack" id="connect-supabase">
           <div class="card-head"><h2>Supabase</h2><span class="pill">Progetti</span></div>
           <label>Token Management API<input id="supabase-token" type="password" required autocomplete="off" placeholder="Token di accesso personale"></label>
+          <p class="hint">Usa un token personale dell’account con accesso ai progetti. <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#supabase" target="_blank" rel="noopener">Come crearlo</a></p>
           <button class="button" type="submit">Carica progetti</button>
           <div id="projects"></div>
         </form>
@@ -140,6 +157,7 @@
               <a href="https://vercel.com/account/tokens" target="_blank" rel="noopener">Crea un token ↗</a>
             </div>
           </form>
+          <p class="hint">Scegli un token con accesso all’account o al team dei tuoi progetti. <a href="https://cosmonetinfo.github.io/CosmoCoding/guida.html#vercel" target="_blank" rel="noopener">Come trovare il team</a></p>
           <div class="stack" id="vercel-browser" hidden>
             <div class="form-two">
               <label>Progetto Vercel<select id="vercel-project"></select></label>
