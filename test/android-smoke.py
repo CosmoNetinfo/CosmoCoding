@@ -58,9 +58,10 @@ def screen(name):
     (SCREENS / (name + ".png")).write_bytes(image)
 
 
-def tap(predicate, description):
+def tap(predicate, description, last=False):
     def bounds():
-        for node in ui():
+        nodes = ui()
+        for node in reversed(nodes) if last else nodes:
             if predicate(node) and node.get("bounds"):
                 x1, y1, x2, y2 = map(int, re.findall(r"\d+", node.get("bounds")))
                 if x2 > x1 and y2 > y1:
@@ -104,7 +105,8 @@ def smoke():
     find(label("Windows"), "La schermata Build non presenta i target")
     screen("03-build")
 
-    tap(lambda node: label("Connessioni")(node) and node.get("clickable") == "true", "Connessioni non raggiungibili")
+    tap(lambda node: label("Connessioni")(node) and node.get("clickable") == "true",
+        "Connessioni non raggiungibili", last=True)
     find(label("Token GitHub"), "Schermata Connessioni senza il connettore GitHub")
     screen("04-connessioni")
     tap(label("Elenca repository"), "Pulsante Elenca repository assente")
