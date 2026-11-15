@@ -141,8 +141,10 @@ jobs:
           mkdir -p packages
           "$tools/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/cosmocoding-aligned.apk"
           keytool -genkeypair -keystore "$RUNNER_TEMP/preview.p12" -storetype PKCS12 -storepass preview-only -keypass preview-only -alias cosmocoding-preview -dname 'CN=CosmoCoding Preview' -keyalg RSA -keysize 2048 -validity 730
-          "$tools/apksigner" sign --ks "$RUNNER_TEMP/preview.p12" --ks-pass pass:preview-only --out "$apk" "$RUNNER_TEMP/cosmocoding-aligned.apk"
-          "$tools/apksigner" verify --verbose "$apk"
+          "$tools/apksigner" sign --ks "$RUNNER_TEMP/preview.p12" --ks-pass pass:preview-only \
+            --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true \
+            --out "$apk" "$RUNNER_TEMP/cosmocoding-aligned.apk"
+          "$tools/apksigner" verify --verbose --min-sdk-version 26 "$apk"
           "$tools/aapt" dump badging "$apk" | sed -n '1p'
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
@@ -180,11 +182,11 @@ jobs:
             exit 1
           fi
           cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
-          Prima anteprima di CosmoCoding con la mascotte e il workspace integrato. GitHub, GPT, Claude, Gemini e Supabase usano le credenziali inserite nell’app.
+          Anteprima di CosmoCoding con la mascotte e il workspace integrato. GitHub, GPT, Claude, Gemini e Supabase usano le credenziali inserite nell’app.
 
           - **Windows x64** — esegui il setup `.exe`. Il setup non è firmato.
           - **macOS Apple Silicon** — monta il `.dmg` e trascina l’app in Applicazioni. Il pacchetto non è notarizzato.
-          - **Android 11 o successivo** — installa l’APK di anteprima firmato per questa build. Per installare una futura anteprima firmata con un’altra chiave potrebbe servire disinstallare questa versione.
+          - **Android 8 o successivo** — installa l’APK di anteprima e usa una versione aggiornata di Android System WebView. Se è già installata un’anteprima con un certificato diverso, disinstallala prima.
           - **Ubuntu/Debian amd64** — installa il `.deb` con `sudo apt install ./nome-del-pacchetto.deb`.
 
           I checksum SHA-256 degli installer sono in `SHA256SUMS.txt`.

@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,28 +33,16 @@ public final class WorkspaceActivity extends Activity {
     private static final String ORIGIN = "https://" + HOST;
     private static final int BACKGROUND = 0xff0d1116;
     private static final int MAX_RESPONSE_BYTES = 12_000_000;
-    private static final Map<String, String> ASSETS = Map.ofEntries(
-        Map.entry("/index.html", "text/html"),
-        Map.entry("/style.css", "text/css"),
-        Map.entry("/app.js", "text/javascript"),
-        Map.entry("/api.mjs", "text/javascript"),
-        Map.entry("/template.mjs", "text/javascript"),
-        Map.entry("/upstream.mjs", "text/javascript"),
-        Map.entry("/native-transport.mjs", "text/javascript"),
-        Map.entry("/starter.json", "application/json"),
-        Map.entry("/manifest.webmanifest", "application/manifest+json"),
-        Map.entry("/cosmocoding-icon-192.png", "image/png"),
-        Map.entry("/cosmocoding-icon-512.png", "image/png")
-    );
-    private static final Map<String, String> SECURITY = Map.of(
-        "cache-control", "no-store",
-        "x-content-type-options", "nosniff",
-        "content-security-policy", "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
-    );
-    private static final Set<String> HEADERS = Set.of(
+    private static final Map<String, String> SECURITY = new HashMap<>();
+    static {
+        SECURITY.put("cache-control", "no-store");
+        SECURITY.put("x-content-type-options", "nosniff");
+        SECURITY.put("content-security-policy", "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
+    }
+    private static final String[] HEADERS = {
         "authorization", "accept", "content-type", "x-github-api-version", "user-agent", "x-api-key",
         "anthropic-version", "x-goog-api-key"
-    );
+    };
 
     private final ExecutorService network = Executors.newFixedThreadPool(4);
     private WebView workspace;
@@ -87,7 +75,7 @@ public final class WorkspaceActivity extends Activity {
                 Uri uri = request.getUrl();
                 if (local(uri) && "/".equals(uri.getPath())) return false;
                 if (request.isForMainFrame() && request.hasGesture() && "https".equals(uri.getScheme())
-                    && Set.of("github.com", "supabase.com").contains(uri.getHost() == null ? "" : uri.getHost())) {
+                    && ("github.com".equals(uri.getHost()) || "supabase.com".equals(uri.getHost()))) {
                     try {
                         startActivity(new Intent(Intent.ACTION_VIEW, uri));
                     } catch (ActivityNotFoundException ignored) {
@@ -110,13 +98,26 @@ public final class WorkspaceActivity extends Activity {
         return "https".equals(uri.getScheme()) && HOST.equals(uri.getEncodedAuthority());
     }
 
+    private static String assetType(String path) {
+        if (path == null) return null;
+        return switch (path) {
+            case "/index.html" -> "text/html";
+            case "/style.css" -> "text/css";
+            case "/app.js", "/api.mjs", "/template.mjs", "/upstream.mjs", "/native-transport.mjs" -> "text/javascript";
+            case "/starter.json" -> "application/json";
+            case "/manifest.webmanifest" -> "application/manifest+json";
+            case "/cosmocoding-icon-192.png", "/cosmocoding-icon-512.png" -> "image/png";
+            default -> null;
+        };
+    }
+
     private WebResourceResponse bundledAsset(WebResourceRequest request) {
         Uri target = request.getUrl();
         if (!local(target) || !"GET".equals(request.getMethod())) {
             return new WebResourceResponse("text/plain", "UTF-8", 403, "Forbidden", SECURITY, null);
         }
         String path = "/".equals(target.getPath()) ? "/index.html" : target.getPath();
-        String mime = path == null ? null : ASSETS.get(path);
+        String mime = assetType(path);
         if (mime != null) {
             try {
                 return new WebResourceResponse(mime, mime.equals("image/png") ? null : "UTF-8",
@@ -166,7 +167,7 @@ public final class WorkspaceActivity extends Activity {
                 String response = "";
                 try {
                     URI target = URI.create(url);
-                    if (!allowedProvider(target) || !Set.of("GET", "POST").contains(method)
+                    if (!allowedProvider(target) || !("GET".equals(method) || "POST".equals(method))
                         || headers.length() > 10_000 || body.length() > 300_000) {
                         throw new IOException("Invalid provider request");
                     }

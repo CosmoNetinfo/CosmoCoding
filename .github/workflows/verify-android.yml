@@ -6,7 +6,7 @@ on:
       tag:
         description: Tag della release da installare
         required: true
-        default: v0.1.0
+        default: v0.1.1
         type: string
 
 permissions:
@@ -54,10 +54,20 @@ jobs:
           sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           adb="$sdk/platform-tools/adb"
           "$sdk/emulator/emulator" -avd cosmocoding -port 5554 -no-window -no-audio -no-boot-anim -no-snapshot \
+            -cores 4 -memory 3072 -camera-back none -camera-front none -feature -Vulkan \
             -gpu swiftshader_indirect -accel on > "$RUNNER_TEMP/cosmo-emulator.log" 2>&1 &
           emulator=$!
           trap 'kill "$emulator" 2>/dev/null || true' EXIT
-          if ! python3 test/android-smoke.py "$adb" "$COSMO_APK"; then
+          if ! python3 test/android-smoke.py "$adb" "$COSMO_APK" "$RUNNER_TEMP/cosmocoding-screens"; then
+            "$adb" -s emulator-5554 logcat -d -t 180 AndroidRuntime:E chromium:E ActivityTaskManager:I '*:S' || true
             tail -n 70 "$RUNNER_TEMP/cosmo-emulator.log"
             exit 1
           fi
+      - name: Salva schermate Android
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: cosmocoding-android-screens
+          path: ${{ runner.temp }}/cosmocoding-screens/*.png
+          if-no-files-found: ignore
+          retention-days: 14
